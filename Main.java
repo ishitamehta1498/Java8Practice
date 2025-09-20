@@ -7,6 +7,16 @@ import java.util.stream.*;
 
 public class Main {
     public static void main(String[] args) {
+        System.out.println("Most repeated element");
+        List<String> items = Arrays.asList("apple", "banana", "apple", "orange", "banana");
+        String mostRepeated = items.stream()
+                .collect(Collectors.groupingBy(e -> e, Collectors.counting()))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+        System.out.println("Most Repeated: " + mostRepeated);
+
         System.out.println("2nd longest word in string");
         String longest1="this is an example string with some very long words like extraordinary";
         String s4 = Arrays.stream(longest1.split("\\s+"))
@@ -186,6 +196,15 @@ public class Main {
                 .toList();
         System.out.println("Common elements: " + common);
 
+        System.out.println("Find common elements between two lists");
+        List<Integer> list1 = Arrays.asList(1, 2, 3, 4);
+        List<Integer> list2 = Arrays.asList(3, 4, 5, 6);
+        List<Integer> commonElements = list1.stream()
+                .filter(list2::contains)
+                .toList();
+        System.out.println(commonElements);
+
+
         System.out.println("reverse array in-place");
         int[] num1 = {1, 6, 3, 2, 9, 0};
         IntStream.range(0, num1.length / 2)
@@ -235,8 +254,8 @@ public class Main {
         System.out.println(collect1);
 
         System.out.println("remove duplicate elements");
-        List<Integer> list1 = Arrays.asList(1, 2, 7, 1, 3, 5, 4, 4, 0);
-        List<Integer> distinct = list1.stream().distinct().toList();
+        List<Integer> list11 = Arrays.asList(1, 2, 7, 1, 3, 5, 4, 4, 0);
+        List<Integer> distinct = list11.stream().distinct().toList();
         System.out.println(distinct);
 
         System.out.println("Given a list of integers, separate odd and even numbers");
@@ -292,6 +311,10 @@ public class Main {
         else {
             System.out.println("Two strings are not anagrams");
         }
+        //or
+        boolean isAnagram = s01.chars().sorted().boxed().toList()
+                .equals(s02.chars().sorted().boxed().toList());
+        System.out.println(isAnagram);
 
         System.out.println("sum of all digits");
         int i = 15623;
@@ -375,8 +398,8 @@ public class Main {
         System.out.println(firstChar);
 
         System.out.println("check if all elements matches the condition - say all are even");
-        List<Integer> list2 = Arrays.asList(8, 2, 4, 4, 0);
-        boolean allEven = list2.stream().allMatch(x -> x % 2 == 0);
+        List<Integer> list22 = Arrays.asList(8, 2, 4, 4, 0);
+        boolean allEven = list22.stream().allMatch(x -> x % 2 == 0);
         System.out.println("All elements are even: " + allEven);
 
         System.out.println("find max and min in list of integers");
