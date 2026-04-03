@@ -8,7 +8,7 @@ import java.util.stream.*;
 public class Main {
     public static void main(String[] args) {
         System.out.println("Most repeated element");
-        List<String> items = Arrays.asList("apple", "banana", "apple", "orange", "banana");
+        List<String> items = List.of("apple", "banana", "apple", "apple", "orange", "banana");
         String mostRepeated = items.stream()
                 .collect(Collectors.groupingBy(e -> e, Collectors.counting()))
                 .entrySet().stream()
@@ -44,7 +44,7 @@ public class Main {
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
         System.out.println(collect);
 
-        //or
+        //or (better)
         Map<Character, Long> freqMap = str.chars()
                 .mapToObj(c -> (char) c)
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
@@ -145,10 +145,11 @@ public class Main {
                 .reduce((word1, word2) -> word1.length() > word2.length() ? word1 : word2).get();
         System.out.println("longest string: " + longest);
         //or
-        String s23 = Arrays.stream(str1).sorted(Comparator.comparingInt(String::length).reversed())
+        String s23 = Arrays.stream(str1)
+                .sorted(Comparator.comparingInt(String::length).reversed())
                 .findFirst().orElse(null);
         System.out.println(s23);
-        //or
+        //or (best)
         String s33 = Arrays.stream(str1).max(Comparator.comparingInt(String::length)).orElse(null);
         System.out.println(s33);
 
@@ -216,8 +217,11 @@ public class Main {
         System.out.println(Arrays.toString(num1));
 
         System.out.println("sum of all elements");
-        int sum = Arrays.stream(num1).reduce(0, (sums, i) -> sums + i);
+        int sum = Arrays.stream(num1).sum();
         System.out.println("Sum: " + sum);
+        //or
+        int summ = Arrays.stream(num1).reduce(0, (sums, i) -> sums + i);
+        System.out.println("Sum: " + summ);
         //or
         List<Integer> list9 = Arrays.asList(1, 2, 7, 3, 5, 4);
         int sum1 = list9.stream()
@@ -239,7 +243,6 @@ public class Main {
         System.out.println("convert list to uppercase");
         List<String> fruitList = fruits.stream().map(String::toUpperCase).collect(Collectors.toList());
         System.out.println(fruitList);
-
         System.out.println("filter even numbers");
         List<Integer> even = list9.stream().filter(x -> x % 2 == 0).toList();
         System.out.println(even);
@@ -293,9 +296,19 @@ public class Main {
                 .collect(Collectors.toSet());
         System.out.println(re1);
 
+        //or
+
+        Set<Character> set3=new HashSet<>();
+        Set<Character> set4 = inputString.toLowerCase().replaceAll("\\s+", "")
+                .chars()
+                .mapToObj(c -> (char) c)
+                .filter(el -> !set3.add(el))
+                .collect(Collectors.toSet());
+        System.out.println(set4);
+
         System.out.println("Reverse each word of a string using Java 8 streams");
         String stri = "Java Concept Of The Day";
-        String reversedStr = Arrays.stream(stri.split(" "))
+        String reversedStr = Arrays.stream(stri.split("\\s+"))
                 .map(word -> new StringBuilder(word).reverse().toString())
                 .collect(Collectors.joining(" "));
         System.out.println(reversedStr);
@@ -303,18 +316,14 @@ public class Main {
         System.out.println("check if two strings are anagrams or not");
         String s01 = "RaceCar";
         String s02 = "CarRace";
-        s01 = Arrays.stream(s01.toLowerCase().split("")).sorted().collect(Collectors.joining());
-        s02 = Arrays.stream(s02.toLowerCase().split("")).sorted().collect(Collectors.joining());
+        s01 = Arrays.stream(s01.split("")).sorted().collect(Collectors.joining());
+        s02 = Arrays.stream(s02.split("")).sorted().collect(Collectors.joining());
         if (s01.equals(s02)) {
             System.out.println("Two strings are anagrams");
         }
         else {
             System.out.println("Two strings are not anagrams");
         }
-        //or
-        boolean isAnagram = s01.chars().sorted().boxed().toList()
-                .equals(s02.chars().sorted().boxed().toList());
-        System.out.println(isAnagram);
 
         System.out.println("sum of all digits");
         int i = 15623;
@@ -337,7 +346,7 @@ public class Main {
         String collect21 = String.join("", strs);
         System.out.println(collect21);
 
-        System.out.println("count occurrence of a character in list of strings");
+        System.out.println("count occurrence of \'a\' character in list of strings");
         List<String> fruitsList =Arrays.asList("apple","banana ","cherry","strawberry");
         char target='a';
         long count1 = fruitsList.stream()
@@ -363,9 +372,11 @@ public class Main {
         List<Character> collect4= strs2.stream()
                 .flatMapToInt(String::chars)
                 .mapToObj(c->(char)c)
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                .keySet().stream()
+                .distinct()
                 .toList();
+//                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+//                .keySet().stream()
+//                .toList();
         System.out.println(collect4);
 
         //or
@@ -632,11 +643,11 @@ public class Main {
 
         System.out.println("Who has the most working experience in the organization?");
         Employee seniorMostEmployee = employeeList.stream()
-                .sorted(Comparator.comparing(Employee::getYearOfJoining)).findFirst().orElse(null);
+                .sorted(Comparator.comparingInt(Employee::getYearOfJoining)).findFirst().orElse(null);
         System.out.println(seniorMostEmployee);
         //or
         Employee seniorMostEmployee1 = employeeList.stream()
-                .min(Comparator.comparing(Employee::getYearOfJoining)).orElse(null);
+                .min(Comparator.comparingInt(Employee::getYearOfJoining)).orElse(null);
         System.out.println(seniorMostEmployee1);
 
         System.out.println("List down the names of all employees in each department?");
@@ -689,7 +700,7 @@ public class Main {
         intList.add(new IntegerList(3, 13));
         HashMap<Integer, Integer> integerHashMap = new HashMap<>();
 
-        intList.stream().forEach(x -> integerHashMap.put(x.getKey(), x.getValue()));
+        intList.forEach(x -> integerHashMap.put(x.getKey(), x.getValue()));
         System.out.println(integerHashMap);
 
         String email = "abc@gmail.com";
@@ -754,7 +765,7 @@ public class Main {
         al.add(203);
         System.out.println("Elements of the ArrayList before sorting : " + al);
         // using lambda expression in place of comparator object
-        Collections.sort(al, (o1, o2) -> o1 < o2 ? -1 : o1 > o2 ? 1 : 0);
+        Collections.sort(al, (o1, o2) -> o1.compareTo(o2));
         System.out.println("Elements of the ArrayList after sorting : " + al);
 
         //naturally sorts in asc order, change to desc order
